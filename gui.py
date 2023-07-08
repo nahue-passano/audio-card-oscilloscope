@@ -26,7 +26,7 @@ n_time_divs = 10
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Visualizador de Ondas")
+        self.setWindowTitle("Audio Card Oscilloscope")
         self.setGeometry(100, 100, 800, 600)
         self.setup_ui()
 
@@ -150,7 +150,6 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self):
         self.audio_settings()
-        # Configurar el diseño de la ventana
         main_widget = QWidget(self)
         main_layout = QVBoxLayout()
 
@@ -179,15 +178,13 @@ class MainWindow(QMainWindow):
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
 
-        # Iniciar la captura de audio
+        # Audio stream
         self.audio_stream = sd.InputStream(callback=self.audio_callback)
         self.audio_stream.start()
 
-        # Mostrar la ventana
         self.show()
 
     def audio_callback(self, indata, frames, time, status):
-        # Obtener los datos de audio y convertirlos a valores de amplitud
         waveform_data = np.mean(indata, axis=1)
 
         self.axis.clear()
@@ -202,10 +199,10 @@ class MainWindow(QMainWindow):
         hor_dial_value = self.dial_hor_scale.value() * 10 ** (-9) * n_time_divs
         self.axis.set_xlim(xmax=hor_dial_value)
 
+        # Plot
         time_array = np.arange(len(waveform_data)) / self.sample_rate
         self.axis.plot(time_array, waveform_data, "-")
 
-        # Actualizar el gráfico en el lienzo
         self.canvas.draw()
 
 
